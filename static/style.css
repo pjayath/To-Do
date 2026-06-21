@@ -161,6 +161,13 @@ h1 {
     cursor: pointer;
 }
 
+.time-input {
+    padding: 0.6rem 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
 .add-form button:hover {
     background: #4338ca;
 }
@@ -184,6 +191,12 @@ h1 {
     justify-content: center;
 }
 
+.todo-list .time {
+    font-size: 0.8rem;
+    color: #999;
+    min-width: 3.2rem;
+}
+
 .todo-list .title {
     flex: 1;
 }
@@ -197,7 +210,7 @@ h1 {
     display: inline;
 }
 
-.toggle, .delete, .reschedule-btn {
+.delete, .reschedule-btn {
     border: none;
     background: none;
     cursor: pointer;
@@ -205,7 +218,24 @@ h1 {
 }
 
 .toggle {
-    color: #4f46e5;
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid #4f46e5;
+    border-radius: 4px;
+    background: #fff;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.8rem;
+    line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.todo-list li.done .toggle {
+    background: #4f46e5;
 }
 
 .delete {

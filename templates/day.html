@@ -13,6 +13,7 @@
         <form action="{{ url_for('add') }}" method="post" class="add-form">
             <input type="hidden" name="date" value="{{ day }}">
             <input type="text" name="title" placeholder="What needs doing?" autofocus required>
+            <input type="time" name="time" class="time-input">
             <button type="submit">Add</button>
         </form>
 
@@ -21,8 +22,9 @@
             <li class="{{ 'done' if todo['done'] else '' }}">
                 <form action="{{ url_for('toggle', todo_id=todo['id']) }}" method="post" class="inline">
                     <input type="hidden" name="date" value="{{ day }}">
-                    <button type="submit" class="toggle">{{ '✔' if todo['done'] else '○' }}</button>
+                    <button type="submit" class="toggle" aria-label="Toggle done">{{ '✔' if todo['done'] else '' }}</button>
                 </form>
+                <span class="time">{{ todo['time'] }}</span>
                 <span class="title">{{ todo['title'] }}</span>
                 <form action="{{ url_for('reschedule', todo_id=todo['id']) }}" method="post" class="inline reschedule-form">
                     <input type="hidden" name="date" value="{{ day }}">

@@ -1,6 +1,6 @@
 import calendar
 import sqlite3
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 from flask import Flask, g, redirect, render_template, request, url_for
@@ -32,10 +32,14 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             done INTEGER NOT NULL DEFAULT 0,
-            date TEXT NOT NULL
+            date TEXT NOT NULL,
+            time TEXT NOT NULL DEFAULT '00:00'
         )
         """
     )
+    existing_cols = [row[1] for row in db.execute("PRAGMA table_info(todos)").fetchall()]
+    if "time" not in existing_cols:
+        db.execute("ALTER TABLE todos ADD COLUMN time TEXT NOT NULL DEFAULT '00:00'")
     db.commit()
     db.close()
 
@@ -83,7 +87,7 @@ def month_view(year, month):
 def day_view(day):
     db = get_db()
     todos = db.execute(
-        "SELECT * FROM todos WHERE date = ? ORDER BY id DESC", (day,)
+        "SELECT * FROM todos WHERE date = ? ORDER BY date ASC, time ASC", (day,)
     ).fetchall()
     day_date = date.fromisoformat(day)
     return render_template("day.html", todos=todos, day=day, day_date=day_date)
@@ -93,9 +97,13 @@ def day_view(day):
 def add():
     title = request.form.get("title", "").strip()
     todo_date = request.form.get("date") or date.today().isoformat()
+    todo_time = request.form.get("time") or datetime.now().strftime("%H:%M")
     if title:
         db = get_db()
-        db.execute("INSERT INTO todos (title, date) VALUES (?, ?)", (title, todo_date))
+        db.execute(
+            "INSERT INTO todos (title, date, time) VALUES (?, ?, ?)",
+            (title, todo_date, todo_time),
+        )
         db.commit()
     return redirect(url_for("day_view", day=todo_date))
 

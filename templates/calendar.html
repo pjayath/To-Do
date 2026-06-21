@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do Calendar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="calendar-main">
+        <div class="calendar-header">
+            <a href="{{ url_for('month_view', year=prev_year, month=prev_month) }}" class="nav-btn">&larr;</a>
+            <h1>{{ month_name }} {{ year }}</h1>
+            <a href="{{ url_for('month_view', year=next_year, month=next_month) }}" class="nav-btn">&rarr;</a>
+        </div>
+        <table class="calendar-grid">
+            <thead>
+                <tr>
+                    {% for label in ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] %}
+                    <th>{{ label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for week in weeks %}
+                <tr>
+                    {% for day in week %}
+                    {% set iso = day.isoformat() %}
+                    <td class="
+                        {{ 'other-month' if day.month != month else '' }}
+                        {{ 'today' if day == today else '' }}
+                        {{ 'past' if day < today else '' }}
+                    ">
+                        <a href="{{ url_for('day_view', day=iso) }}" class="day-link">
+                            <span class="day-num">{{ day.day }}</span>
+                            {% if iso in counts %}
+                            <span class="day-badge">
+                                {{ counts[iso]['done']|default(0) }}/{{ counts[iso]['total'] }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{{ url_for('day_view', day=today.isoformat()) }}" class="today-link">Go to today</a>
+    </main>
+</body>
+</html>

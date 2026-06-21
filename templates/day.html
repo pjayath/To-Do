@@ -2,29 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>To-Do</title>
+    <title>To-Do — {{ day }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <main>
-        <h1>To-Do</h1>
+        <a href="{{ url_for('month_view', year=day_date.year, month=day_date.month) }}" class="back-link">&larr; Back to calendar</a>
+        <h1>{{ day_date.strftime('%A, %B') }} {{ day_date.day }}, {{ day_date.year }}</h1>
+
         <form action="{{ url_for('add') }}" method="post" class="add-form">
+            <input type="hidden" name="date" value="{{ day }}">
             <input type="text" name="title" placeholder="What needs doing?" autofocus required>
             <button type="submit">Add</button>
         </form>
+
         <ul class="todo-list">
             {% for todo in todos %}
             <li class="{{ 'done' if todo['done'] else '' }}">
                 <form action="{{ url_for('toggle', todo_id=todo['id']) }}" method="post" class="inline">
+                    <input type="hidden" name="date" value="{{ day }}">
                     <button type="submit" class="toggle">{{ '✔' if todo['done'] else '○' }}</button>
                 </form>
                 <span class="title">{{ todo['title'] }}</span>
+                <form action="{{ url_for('reschedule', todo_id=todo['id']) }}" method="post" class="inline reschedule-form">
+                    <input type="hidden" name="date" value="{{ day }}">
+                    <input type="date" name="new_date" value="{{ day }}" class="reschedule-input">
+                    <button type="submit" class="reschedule-btn" title="Move to date">Move</button>
+                </form>
                 <form action="{{ url_for('delete', todo_id=todo['id']) }}" method="post" class="inline">
+                    <input type="hidden" name="date" value="{{ day }}">
                     <button type="submit" class="delete">✕</button>
                 </form>
             </li>
             {% else %}
-            <li class="empty">No to-dos yet. Add one above.</li>
+            <li class="empty">No to-dos for this day. Add one above.</li>
             {% endfor %}
         </ul>
     </main>
